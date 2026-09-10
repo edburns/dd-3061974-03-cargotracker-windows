@@ -69,7 +69,7 @@ public class ChangeArrivalDeadlineDateTest {
     public void surfacesMalformedDeadlineInsteadOfConvertingItToNull()
             throws Exception {
         FakeBookingServiceFacade facade = new FakeBookingServiceFacade(
-                new CargoRouteWithDeadline("not a date"));
+                new CargoRouteWithDeadline("03/15/2019junk"));
         ChangeArrivalDeadlineDate bean = createBean(facade);
         bean.setTrackingId("ABC123");
 

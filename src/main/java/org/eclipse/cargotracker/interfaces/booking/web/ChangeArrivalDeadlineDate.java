@@ -67,12 +67,13 @@ public class ChangeArrivalDeadlineDate implements Serializable {
             SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
             formatter.setLenient(false);
             ParsePosition position = new ParsePosition(0);
-            arrivalDeadlineDate = formatter.parse(datePortion, position);
-            if (arrivalDeadlineDate == null
+            Date parsedDeadline = formatter.parse(datePortion, position);
+            if (parsedDeadline == null
                     || position.getIndex() != datePortion.length()) {
                 throw new ParseException("Invalid arrival deadline",
                         position.getErrorIndex());
             }
+            arrivalDeadlineDate = parsedDeadline;
         } catch (ParseException e) {
             throw new RuntimeException("Error parsing date", e);
         }
