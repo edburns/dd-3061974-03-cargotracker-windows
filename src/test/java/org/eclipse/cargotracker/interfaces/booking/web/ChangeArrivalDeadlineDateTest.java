@@ -69,13 +69,28 @@ public class ChangeArrivalDeadlineDateTest {
     public void surfacesMalformedDeadlineInsteadOfConvertingItToNull()
             throws Exception {
         FakeBookingServiceFacade facade = new FakeBookingServiceFacade(
-                new MalformedCargoRoute());
+                new CargoRouteWithDeadline("not a date"));
         ChangeArrivalDeadlineDate bean = createBean(facade);
         bean.setTrackingId("ABC123");
 
         try {
             bean.load();
             fail("Expected the malformed deadline to be surfaced.");
+        } catch (RuntimeException expected) {
+            assertNull(bean.getArrivalDeadlineDate());
+        }
+    }
+
+    @Test
+    public void rejectsANonexistentCalendarDate() throws Exception {
+        FakeBookingServiceFacade facade = new FakeBookingServiceFacade(
+                new CargoRouteWithDeadline("02/30/2019 00:00:00"));
+        ChangeArrivalDeadlineDate bean = createBean(facade);
+        bean.setTrackingId("ABC123");
+
+        try {
+            bean.load();
+            fail("Expected the invalid calendar date to be surfaced.");
         } catch (RuntimeException expected) {
             assertNull(bean.getArrivalDeadlineDate());
         }
@@ -113,17 +128,19 @@ public class ChangeArrivalDeadlineDateTest {
         }
     }
 
-    private static class MalformedCargoRoute extends CargoRoute {
+    private static class CargoRouteWithDeadline extends CargoRoute {
         private static final long serialVersionUID = 1L;
+        private final String deadline;
 
-        MalformedCargoRoute() {
+        CargoRouteWithDeadline(String deadline) {
             super("ABC123", "USNYC", "SESTO", new Date(), false, false,
                     "USNYC", "IN_PORT");
+            this.deadline = deadline;
         }
 
         @Override
         public String getArrivalDeadline() {
-            return "not a date";
+            return deadline;
         }
     }
 
